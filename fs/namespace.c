@@ -228,6 +228,7 @@ static int susfs_mnt_alloc_id(struct mount *mnt)
 	return 0;
 }
 #endif
+
 static int mnt_alloc_id(struct mount *mnt)
 {
 	int res = ida_alloc(&mnt_id_ida, GFP_KERNEL);
