@@ -1,5 +1,4 @@
---- include/linux/sched.h
-+++ include/linux/sched.h
+diff a/include/linux/sched.h b/include/linux/sched.h	(rejected hunks)
 @@ -1514,8 +1514,16 @@ struct task_struct {
  	ANDROID_KABI_RESERVE(4);
  	ANDROID_KABI_RESERVE(5);

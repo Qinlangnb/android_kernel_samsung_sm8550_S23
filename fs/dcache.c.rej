@@ -1,5 +1,4 @@
---- fs/dcache.c
-+++ fs/dcache.c
+diff a/fs/dcache.c b/fs/dcache.c	(rejected hunks)
 @@ -32,6 +32,9 @@
  #include <linux/bit_spinlock.h>
  #include <linux/rculist_bl.h>

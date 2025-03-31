@@ -1,5 +1,4 @@
---- fs/statfs.c
-+++ fs/statfs.c
+diff a/fs/statfs.c b/fs/statfs.c	(rejected hunks)
 @@ -9,6 +9,10 @@
  #include <linux/security.h>
  #include <linux/uaccess.h>

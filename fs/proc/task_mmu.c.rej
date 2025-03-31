@@ -1,5 +1,4 @@
---- fs/proc/task_mmu.c
-+++ fs/proc/task_mmu.c
+diff a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c	(rejected hunks)
 @@ -21,6 +21,9 @@
  #include <linux/shmem_fs.h>
  #include <linux/uaccess.h>

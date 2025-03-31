@@ -1,5 +1,4 @@
---- fs/open.c
-+++ fs/open.c
+diff a/fs/open.c b/fs/open.c	(rejected hunks)
 @@ -394,6 +394,12 @@ static const struct cred *access_override_creds(void)
  	return old_cred;
  }

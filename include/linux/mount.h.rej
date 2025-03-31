@@ -1,5 +1,4 @@
---- include/linux/mount.h
-+++ include/linux/mount.h
+diff a/include/linux/mount.h b/include/linux/mount.h	(rejected hunks)
 @@ -78,7 +78,11 @@ struct vfsmount {
  	ANDROID_KABI_RESERVE(1);
  	ANDROID_KABI_RESERVE(2);

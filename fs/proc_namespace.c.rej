@@ -1,5 +1,4 @@
---- fs/proc_namespace.c
-+++ fs/proc_namespace.c
+diff a/fs/proc_namespace.c b/fs/proc_namespace.c	(rejected hunks)
 @@ -12,6 +12,9 @@
  #include <linux/security.h>
  #include <linux/fs_struct.h>

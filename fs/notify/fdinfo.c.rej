@@ -1,5 +1,4 @@
---- fs/notify/fdinfo.c
-+++ fs/notify/fdinfo.c
+diff a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c	(rejected hunks)
 @@ -12,6 +12,9 @@
  #include <linux/types.h>
  #include <linux/seq_file.h>

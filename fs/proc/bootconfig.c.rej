@@ -1,5 +1,4 @@
---- fs/proc/bootconfig.c
-+++ fs/proc/bootconfig.c
+diff a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c	(rejected hunks)
 @@ -12,8 +12,19 @@
  
  static char *saved_boot_config;

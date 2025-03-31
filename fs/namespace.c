@@ -32,9 +32,6 @@
 #include <linux/fs_context.h>
 #include <linux/shmem_fs.h>
 #include <linux/mnt_idmapping.h>
-#if defined(CONFIG_KSU_SUSFS_SUS_MOUNT) || defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
-#include <linux/susfs_def.h>
-#endif
 #include <linux/fslog.h>
 #ifdef CONFIG_KDP_NS
 #include <linux/kdp.h>
@@ -42,30 +39,6 @@
 
 #include "pnode.h"
 #include "internal.h"
-
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-extern bool susfs_is_current_ksu_domain(void);
-extern bool susfs_is_current_zygote_domain(void);
-
-static DEFINE_IDA(susfs_mnt_id_ida);
-static DEFINE_IDA(susfs_mnt_group_ida);
-
-#define CL_ZYGOTE_COPY_MNT_NS BIT(24) /* used by copy_mnt_ns() */
-#define CL_COPY_MNT_NS BIT(25) /* used by copy_mnt_ns() */
-#endif
-
-#ifdef CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT
-extern void susfs_auto_add_sus_ksu_default_mount(const char __user *to_pathname);
-bool susfs_is_auto_add_sus_ksu_default_mount_enabled = true;
-#endif
-#ifdef CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT
-extern int susfs_auto_add_sus_bind_mount(const char *pathname, struct path *path_target);
-bool susfs_is_auto_add_sus_bind_mount_enabled = true;
-#endif
-#ifdef CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
-extern void susfs_auto_add_try_umount_for_bind_mount(struct path *path);
-bool susfs_is_auto_add_try_umount_for_bind_mount_enabled = true;
-#endif
 
 /* Maximum number of mounts in a mount namespace */
 unsigned int sysctl_mount_max __read_mostly = 100000;
@@ -218,6 +191,7 @@ static inline struct hlist_head *mp_hash(struct dentry *dentry)
 }
 
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+// Our own mnt_alloc_id() that assigns mnt_id starting from DEFAULT_SUS_MNT_ID
 static int susfs_mnt_alloc_id(struct mount *mnt)
 {
 	int res = ida_alloc_min(&susfs_mnt_id_ida, DEFAULT_SUS_MNT_ID, GFP_KERNEL);
@@ -228,7 +202,6 @@ static int susfs_mnt_alloc_id(struct mount *mnt)
 	return 0;
 }
 #endif
-
 static int mnt_alloc_id(struct mount *mnt)
 {
 	int res = ida_alloc(&mnt_id_ida, GFP_KERNEL);
@@ -1435,13 +1408,6 @@ bypass_orig_flow:
 	}
 #endif
 
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	// If caller process is zygote, then it is a normal mount, so we just reorder the mnt_id
-	if (susfs_is_current_zygote_domain()) {
-		mnt->mnt.susfs_mnt_id_backup = mnt->mnt_id;
-		mnt->mnt_id = current->susfs_last_fake_mnt_id++;
-	}
-#endif
 	lock_mount_hash();
 	list_add_tail(&mnt->mnt_instance, &sb->s_mounts);
 	unlock_mount_hash();
@@ -2867,13 +2833,6 @@ static int do_change_type(struct path *path, int ms_flags)
 			goto out_unlock;
 	}
 
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	// If caller process is zygote, then it is a normal mount, so we just reorder the mnt_id
-	if (susfs_is_current_zygote_domain()) {
-		mnt->mnt.susfs_mnt_id_backup = mnt->mnt_id;
-		mnt->mnt_id = current->susfs_last_fake_mnt_id++;
-	}
-#endif
 	lock_mount_hash();
 	for (m = mnt; m; m = (recurse ? next_mnt(m, mnt) : NULL))
 		change_mnt_propagation(m, type);
@@ -3006,13 +2965,6 @@ static struct file *open_detached_copy(struct path *path, bool recursive)
 		return ERR_CAST(mnt);
 	}
 
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	// If caller process is zygote, then it is a normal mount, so we just reorder the mnt_id
-	if (susfs_is_current_zygote_domain()) {
-		mnt->mnt.susfs_mnt_id_backup = mnt->mnt_id;
-		mnt->mnt_id = current->susfs_last_fake_mnt_id++;
-	}
-#endif
 	lock_mount_hash();
 	for (p = mnt; p; p = next_mnt(p, mnt)) {
 		p->mnt_ns = ns;
@@ -4265,27 +4217,6 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 		goto out_data;
 
 	ret = do_mount(kernel_dev, dir_name, kernel_type, flags, options);
-
-#if defined(CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT) && defined(CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT)
-	// Just for the compatibility of Magic Mount KernelSU
-	if (!ret && susfs_is_auto_add_sus_ksu_default_mount_enabled && susfs_is_current_ksu_domain()) {
-		susfs_auto_add_sus_ksu_default_mount(dir_name);
-	}
-#endif
-
-#if defined(CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT) && defined(CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT)
-	// Just for the compatibility of Magic Mount KernelSU
-	if (!ret && susfs_is_auto_add_sus_ksu_default_mount_enabled && susfs_is_current_ksu_domain()) {
-		susfs_auto_add_sus_ksu_default_mount(dir_name);
-	}
-#endif
-
-#if defined(CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT) && defined(CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT)
-	// Just for the compatibility of Magic Mount KernelSU
-	if (!ret && susfs_is_auto_add_sus_ksu_default_mount_enabled && susfs_is_current_ksu_domain()) {
-		susfs_auto_add_sus_ksu_default_mount(dir_name);
-	}
-#endif
 
 #if defined(CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT) && defined(CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT)
 	// Just for the compatibility of Magic Mount KernelSU

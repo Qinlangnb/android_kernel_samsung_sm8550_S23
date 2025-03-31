@@ -1,5 +1,4 @@
---- fs/overlayfs/readdir.c
-+++ fs/overlayfs/readdir.c
+diff a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c	(rejected hunks)
 @@ -935,7 +935,19 @@ static int ovl_dir_open(struct inode *inode, struct file *file)
  	if (!od)
  		return -ENOMEM;

@@ -1,5 +1,4 @@
---- fs/exec.c
-+++ fs/exec.c
+diff a/fs/exec.c b/fs/exec.c	(rejected hunks)
 @@ -1893,6 +1893,12 @@ static int bprm_execve(struct linux_binprm *bprm,
  	return retval;
  }

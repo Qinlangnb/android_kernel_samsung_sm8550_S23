@@ -1,5 +1,4 @@
---- kernel/kallsyms.c
-+++ kernel/kallsyms.c
+diff a/kernel/kallsyms.c b/kernel/kallsyms.c	(rejected hunks)
 @@ -761,8 +761,18 @@ static int s_show(struct seq_file *m, void *p)
  		seq_printf(m, "%px %c %s\t[%s]\n", value,
  			   type, iter->name, iter->module_name);

@@ -1,5 +1,4 @@
---- fs/stat.c
-+++ fs/stat.c
+diff a/fs/stat.c b/fs/stat.c	(rejected hunks)
 @@ -17,6 +17,9 @@
  #include <linux/syscalls.h>
  #include <linux/pagemap.h>

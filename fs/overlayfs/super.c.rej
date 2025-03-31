@@ -1,5 +1,4 @@
---- fs/overlayfs/super.c
-+++ fs/overlayfs/super.c
+diff a/fs/overlayfs/super.c b/fs/overlayfs/super.c	(rejected hunks)
 @@ -325,6 +325,18 @@ static int ovl_statfs(struct dentry *dentry, struct kstatfs *buf)
  	struct path path;
  	int err;

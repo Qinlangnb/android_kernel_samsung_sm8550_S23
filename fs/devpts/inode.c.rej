@@ -1,5 +1,4 @@
---- fs/devpts/inode.c
-+++ fs/devpts/inode.c
+diff a/fs/devpts/inode.c b/fs/devpts/inode.c	(rejected hunks)
 @@ -596,6 +596,11 @@ struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
  	return dentry;
  }

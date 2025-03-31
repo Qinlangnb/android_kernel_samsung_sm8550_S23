@@ -1,5 +1,4 @@
---- fs/namei.c
-+++ fs/namei.c
+diff a/fs/namei.c b/fs/namei.c	(rejected hunks)
 @@ -39,6 +39,9 @@
  #include <linux/bitops.h>
  #include <linux/init_task.h>
