@@ -27,6 +27,8 @@ set -e
 
 LTO=thin
 
+KERNEL_REPO=$(pwd)
+
 TARGET_DEFCONFIG=${1:-kalama_gki_defconfig}
 
 cd "$(dirname "$0")"
