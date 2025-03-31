@@ -37,10 +37,6 @@
 #include <linux/kdp.h>
 #endif
 
-struct mount *mnt = NULL;
-struct mnt_namespace *new_ns = NULL;
-struct mount *q = NULL;
-
 #if defined(CONFIG_KSU_SUSFS_SUS_MOUNT) || defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 #include <linux/susfs_def.h>
 #endif
