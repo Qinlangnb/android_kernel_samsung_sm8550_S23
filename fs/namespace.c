@@ -33,6 +33,8 @@
 #include <linux/shmem_fs.h>
 #include <linux/mnt_idmapping.h>
 #include <linux/fslog.h>
+#include <linux/mount.h>
+#include <linux/nsproxy.h>
 #ifdef CONFIG_KDP_NS
 #include <linux/kdp.h>
 #endif
