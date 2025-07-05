@@ -650,11 +650,11 @@ static void destroy_gre_conntrack(struct nf_conn *ct)
 
 void nf_ct_destroy(struct nf_conntrack *nfct)
 {
+	unsigned long flags;
 	struct nf_conn *ct = (struct nf_conn *)nfct;
 
     // SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA {
 #ifdef CONFIG_KNOX_NCM
-	unsigned long flags; // 移到 #ifdef 内部
 	spin_lock_irqsave(&knox_nf_conntrack,flags);
 	if (NF_CONN_NPA_VENDOR_DATA_GET(ct)) {
 		kfree(NF_CONN_NPA_VENDOR_DATA_GET(ct));
@@ -801,7 +801,7 @@ static void nf_ct_gc_expired(struct nf_conn *ct)
 /*
  * Warning :
  * - Caller must take a reference on returned object
- * and recheck nf_ct_tuple_equal(tuple, &h->tuple)
+ *   and recheck nf_ct_tuple_equal(tuple, &h->tuple)
  */
 static struct nf_conntrack_tuple_hash *
 ____nf_conntrack_find(struct net *net, const struct nf_conntrack_zone *zone,
@@ -1612,11 +1612,9 @@ early_exit:
 	if (next_run)
 		gc_work->early_drop = false;
 	// SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA {
-#ifdef CONFIG_KNOX_NCM
 	if ( (check_ncm_flag()) && (check_intermediate_flag()) ) {
 		next_run = 0;
 	}
-#endif
 	// SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA }
 
 	queue_delayed_work(system_power_efficient_wq, &gc_work->dwork, next_run);
@@ -1718,6 +1716,7 @@ EXPORT_SYMBOL_GPL(nf_conntrack_alloc);
 
 void nf_conntrack_free(struct nf_conn *ct)
 {
+	unsigned long flags;
 	struct net *net = nf_ct_net(ct);
 	struct nf_conntrack_net *cnet;
 
@@ -1733,7 +1732,6 @@ void nf_conntrack_free(struct nf_conn *ct)
 	smp_mb__before_atomic();
 	// SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA {
 #ifdef CONFIG_KNOX_NCM
-	unsigned long flags; // 移到 #ifdef 内部
 	spin_lock_irqsave(&knox_nf_conntrack,flags);
 	if (NF_CONN_NPA_VENDOR_DATA_GET(ct)) {
 		kfree(NF_CONN_NPA_VENDOR_DATA_GET(ct));
@@ -1876,9 +1874,9 @@ resolve_normal_ct(struct nf_conn *tmpl,
 	if (!h) {
 		rid = nf_ct_zone_id(zone, IP_CT_DIR_REPLY);
 		if (zone_id != rid) {
-			u32 tmp_hash = hash_conntrack_raw(&tuple, rid, state->net); // 重命名局部变量以避免与外部 hash 冲突
+			u32 tmp = hash_conntrack_raw(&tuple, rid, state->net);
 
-			h = __nf_conntrack_find_get(state->net, zone, &tuple, tmp_hash);
+			h = __nf_conntrack_find_get(state->net, zone, &tuple, tmp);
 		}
 	}
 
@@ -2639,8 +2637,8 @@ void nf_conntrack_cleanup_net_list(struct list_head *net_exit_list)
 
 	/*
 	 * This makes sure all current packets have passed through
-	 * netfilter framework.  Roll on, two-stage module
-	 * delete...
+	 *  netfilter framework.  Roll on, two-stage module
+	 *  delete...
 	 */
 	synchronize_net();
 i_see_dead_people:
