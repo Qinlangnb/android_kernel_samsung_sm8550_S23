@@ -11,7 +11,7 @@ MAIN_DEFCONFIG=kalama_gki_defconfig
 
 # 2. 内核版本标识
 # 构建系统会自动附加 git commit hash
-LOCALVERSION_BASE=-android13-Kokuban-Firefly-DYF1-LKM
+LOCALVERSION_BASE=-android13-Kokuban-Firefly-DYF1-SukiSUU
 
 # 3. LTO (Link Time Optimization)
 # 设置为 "full", "thin" 或 "" (留空以禁用)
